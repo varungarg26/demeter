@@ -69,20 +69,24 @@ class User(db.Model):
 def token_required(f):
     @wraps(f)
     def decorated(*args,**kwargs):
-        token=None
-        if 'x-access-tokens' in request.headers:
-            token=request.headers['x-access-tokens']
-        if not token:
-            return jsonify(message='Token is missing'),401
-        try:
-            data=jwt.decode(token, app.config['SECRET_KEY'])
-            current_user=User.query.filter_by(public_id=data['public_id']).first()
-        except:
-            return jsonify(message='Token is invalid'),401
+        token = None
+        if 'token' not in session:
+            return render_template('need-to-login-error.jinja2')
+        else:
+            if session is None:
+                return render_template('need-to-login-error.jinja2')
+            if 'cookie' in request.headers:
+                token=session['token']
+            if 'cookie' not in request.headers:
+                return jsonify(message='Token is missing'),401
+            try:
+                data=jwt.decode(token, app.config['SECRET_KEY'])
+                current_user=User.query.filter_by(public_id=data['public_id']).first()
+            except:
+                return jsonify(message='Token is invalid'),401
 
-        return f(current_user, *args, **kwargs)
+            return f(current_user, *args, **kwargs)
     return decorated
-
 
 @app.route('/api/register', methods=['POST'])
 def register():
