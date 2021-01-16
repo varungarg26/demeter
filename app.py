@@ -119,6 +119,12 @@ def portfolioCreate(current_user):
         db.session.add(groceryList)
         db.session.commit()
         return jsonify(message="List Created"),201
+@app.route('/api/addUsertoList/<grocery_list>')
+@token_required
+def addUsertoList(current_user,grocery_list):
+    current_user.groceryList=grocery_list
+    db.session.commit()
+    return jsonify(message="User Added to List")
 
 @app.route('/api/getUser',methods=['GET'])
 @token_required
