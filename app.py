@@ -49,6 +49,7 @@ def db_seed():
                              phoneNumber='4166666666',
                              password=hashed_password,
                              public_id=str(uuid.uuid4()),
+                             groceryList=""
                              )
     db.session.add(testUser)
     db.session.commit()
@@ -118,6 +119,29 @@ def portfolioCreate(current_user):
         db.session.add(groceryList)
         db.session.commit()
         return jsonify(message="List Created"),201
+        
+@app.route('/api/viewList', methods=['GET'])
+@token_required
+def viewList(current_user):
+    
+    groupList=GroceryList.query.filter_by(list_id=current_user.groceryList).all()
+    itemListAll=Item.query.filter_by(list_id=current_user.groceryList).all()
+    output=[]
+    allItems=[]
+    if groupList:
+        if itemListAll:
+            for items in itemListAll:
+                itemss={}
+                itemss['itemName']=items.ItemName
+                items['quantity']=items.Quantity
+                items['comment']=items.comment
+                allItems.append(itemss)
+            return jsonify(items=allItems)
+        else:
+            return jsonify(message="No items in the list")
+    else:
+        return jsonify (message="List not found")
+
 
 @app.route('/api/addtoList/<grocery_list>', methods=['POST'])
 @token_required
