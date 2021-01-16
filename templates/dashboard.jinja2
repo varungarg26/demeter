@@ -67,20 +67,34 @@ body{
 <body>
 {% block content %}
 
-    <!--  if usr groups == 0, show this block  -->
+    <p>Invite a friend! Send them this ID: {{ list_data['list_id'] }}</p>
+    <p>Group Name: {{ list_data['GroceryName'] }}</p>
+    {% if list_data['picked'] == False %}
+        <p>Pickup in Progress: No</p>
+        <p>User Picking Up: {{ list_data['pickerUser'] }}</p>
+    {% else %}
+        <p>Pickup in Progress: Yes</p>
 
-    <section class="nogroupMain">
-        <div class="nogroupText">
-            <h6 class="nogroupMessage">You're not part of a group!</h6>
-            <div class="row1">
-                <a class="heroButton createButton" href="">create</a>
-                <a class="heroButton joinButton" href="">join</a>
+    {% endif %}
+
+    <p>Users in this list: </p>
+    <ul>
+        {% for x in range(total) %}
+        <li>{{ email_data[x] }}</li>
+        {% endfor %}
+    </ul>
+
+    <form class="form-item" method="POST">
+            <div class="row3">
+                 <p class="other">Add an item to the list</p>
             </div>
-        </div>
-    </section>
-
-    <!--  else show other block filled with their groups  -->
-
+            <div class="row4">
+                <input  type="text" id="groceryList" name="groceryList" class="groceryList" placeholder="Grocery List" required autofocus>
+            </div>
+            <div class="row5">
+                <a href="{{ url_for('listCreate') }}"><button class="heroButton signupButton">Join</button></a>
+            </div>
+        </form>
 
 
 

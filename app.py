@@ -106,6 +106,11 @@ def token_required(f):
             return f(current_user, *args, **kwargs)
     return decorated
 
+@app.route('/api/groceryList')
+@token_required
+def createList(current_user):
+    return render_template('createList.jinja2')
+
 @app.route('/api/groceryList', methods=['POST'])
 @token_required
 def listCreate(current_user):
@@ -113,31 +118,42 @@ def listCreate(current_user):
     user_data['public_id']=current_user.public_id
 
     gList=request.form
-    g=GroceryList.query.filter_by(GroceryName=gList['ListName']).first()
-    if g:
-        return jsonify(message="List with the same name exists"),401
-    else:
-        groceryList=GroceryList(
-                list_id=str(uuid.uuid4()),
-                GroceryName=gList['ListName'],
-                dateCreated=datetime.datetime.now(),
-                picked=False,
-                userPickerUp="none"
-        )
-        db.session.add(groceryList)
-        db.session.commit()
 
-        groceryGroup = GroceryList.query.filter_by(GroceryName=gList['ListName']).first()
-        current_user.groceryList = groceryGroup.list_id
+    if request.form.get('ListName'):
+        g = GroceryList.query.filter_by(GroceryName=gList['ListName']).first()
+        print("HIHIHIHIHHIIHIHIHIH")
+        if g:
+            return jsonify(message="List with the same name exists"),401
+        else:
+            groceryList=GroceryList(
+                    list_id=str(uuid.uuid4()),
+                    GroceryName=gList['ListName'],
+                    dateCreated=datetime.datetime.now(),
+                    picked=False,
+                    userPickerUp="none"
+            )
+            db.session.add(groceryList)
+            db.session.commit()
 
-        db.session.commit()
+            groceryGroup = GroceryList.query.filter_by(GroceryName=gList['ListName']).first()
+            current_user.groceryList = groceryGroup.list_id
 
-        return jsonify(message="List Created"),201
+            db.session.commit()
 
-@app.route('/api/groceryList')
+            return redirect(url_for('viewListData'))
+
+    elif request.form.get('groceryList'):
+        print("HELLO MY NAME IS RISHI SHAH ")
+        return redirect('/api/addUsertoList/' + gList['groceryList'])
+
+@app.route('/api/addUsertoList/<id>')
 @token_required
-def createList(current_user):
-    return render_template('createList.jinja2')
+def addUsertoList(current_user, id):
+    groceryGroup = GroceryList.query.filter_by(GroceryName=id).first()
+    current_user.groceryList = groceryGroup.list_id
+    db.session.commit()
+    return redirect(url_for('viewListData'))
+
 
 @app.route('/api/viewListforUser/<grocery_list>', methods=['GET'])
 @token_required
@@ -203,14 +219,6 @@ def addtoList(current_user, grocery_list):
     return jsonify(message="Item Added"), 201
 
 
-@app.route('/api/addUsertoList/', methods=['POST'])
-@token_required
-def addUsertoList(current_user):
-    add = request.form
-    current_user.groceryList = add['groceryList']
-    db.session.commit()
-    return jsonify(message="User Added to List")
-
 
 
 @app.route('/api/picked', methods=['GET'])
@@ -266,8 +274,16 @@ def viewListData(current_user):
         list_data['picked'] = groupList.picked
         list_data['pickerUser'] = groupList.userPickerUp
 
-        return render_template('dashboard.jinja2')
-        return jsonify(message=list_data)
+        users = User.query.filter_by(groceryList=current_user.groceryList).all()
+
+        email_data = []
+
+        for x in range(len(users)):
+            email_data.append(users[x].email)
+
+
+        return render_template('dashboard.jinja2', list_data=list_data, email_data=email_data, total=len(users))
+        #return jsonify(list_data=list_data)
     else:
         return redirect(url_for('createList'))
 
@@ -341,12 +357,13 @@ def login_page():
     return render_template('login.jinja2')
 
 @app.route('/api/profile')
-
-def profile():
+@token_required
+def profile(current_user):
     return render_template('profile.jinja2', userdata=session['userData'])
 
 @app.route('/api/logout')
-def logout():
+@token_required
+def logout(current_user):
     session.pop('token', None)
     session.pop('userData', None)
     return redirect(url_for('homepage'))
