@@ -20,10 +20,8 @@ from flask import Flask, session
 
 app = Flask(__name__)
 basedir = os.path.abspath(os.path.dirname(__file__))
-app.config['SQLALCHEMY_DATABASE_URI']='sqlite:///' + os.path.join(basedir,'users.db')
-app.config['SECRET_KEY']='secret-key'
-
-
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(basedir,'users.db')
+app.config['SECRET_KEY'] = 'secret-key'
 
 
 
@@ -103,7 +101,7 @@ def token_required(f):
 @app.route('/api/groceryList', methods=['POST'])
 @token_required
 def portfolioCreate(current_user):
-    user_data={}
+    user_data = {}
     user_data['public_id']=current_user.public_id
 
     gList=request.json
@@ -123,14 +121,15 @@ def portfolioCreate(current_user):
         db.session.commit()
         return jsonify(message="List Created"),201
 
+
 @app.route('/api/viewListforUser/<grocery_list>', methods=['GET'])
 @token_required
 def viewListUser(current_user,grocery_list):
     
-    groupList=GroceryList.query.filter_by(list_id=current_user.groceryList).all()
-    itemListAll=Item.query.filter_by(Username=current_user.firstName).all()
-    output=[]
-    allItems=[]
+    groupList = GroceryList.query.filter_by(list_id=current_user.groceryList).all()
+    itemListAll = Item.query.filter_by(Username=current_user.firstName).all()
+    output = []
+    allItems = []
     if groupList:
         if itemListAll:
             for items in itemListAll:
@@ -146,18 +145,19 @@ def viewListUser(current_user,grocery_list):
     else:
         return jsonify (message="List not found")        
 
+
 @app.route('/api/viewList/<grocery_list>', methods=['GET'])
 @token_required
-def viewList(current_user,grocery_list):
+def viewList(current_user, grocery_list):
     
-    groupList=GroceryList.query.filter_by(list_id=current_user.groceryList).all()
-    itemListAll=Item.query.filter_by().all()
-    output=[]
-    allItems=[]
+    groupList = GroceryList.query.filter_by(list_id=current_user.groceryList).all()
+    itemListAll = Item.query.filter_by().all()
+    output = []
+    allItems = []
     if groupList:
         if itemListAll:
             for items in itemListAll:
-                itemss={}
+                itemss = {}
                 itemss['itemName']=items.ItemName
                 itemss['quantity']=items.Quantity
                 itemss['comment']=items.Comments
@@ -172,20 +172,34 @@ def viewList(current_user,grocery_list):
 
 @app.route('/api/addtoList/<grocery_list>', methods=['POST'])
 @token_required
-def addtoList(current_user,grocery_list):
+def addtoList(current_user, grocery_list):
 
-    new=request.json
-    newItem=Item(
+    new = request.json
+    newItem = Item(
                 Username=current_user.firstName,
                 list_id=grocery_list,
                 item_id=str(uuid.uuid4()),
                 ItemName=new['ItemName'],
                 Quantity=new['Quantity'],
-                Comments=new['Comments']
-        )
+                Comments=new['Comments'])
     db.session.add(newItem)
     db.session.commit()
-    return jsonify(message="Item Added"),201
+    return jsonify(message="Item Added"), 201
+
+
+@app.route('/app/removeFromList/<item_id>', methods=['DELETE'])
+@token_required
+def removeFromList(current_user, item_id):
+
+    removeItem = Item.query.filter_by(item_id=item_id).first()
+
+    if removeItem:
+        db.session.delete(removeItem)
+        db.sessiom.commit()
+        return jsonify(message="Item has been removed")
+    else:
+        jsonify(message="Item does not exist")
+
 
 @app.route('/api/addUsertoList/<grocery_list>',methods=['POST'])
 @token_required
@@ -194,23 +208,23 @@ def addUsertoList(current_user,grocery_list):
     db.session.commit()
     return jsonify(message="User Added to List")
 
+
 @app.route('/api/picked',methods=['GET'])
 @token_required
 def volunteer(current_user):
-    groupList=GroceryList.query.filter_by(list_id=current_user.groceryList).first()
+    groupList = GroceryList.query.filter_by(list_id=current_user.groceryList).first()
     groupList.picked=True
     db.session.commit()
     return jsonify(message="User has Volunteered")
 
 
-
-@app.route('/api/getGroceryList',methods=['GET'])
+@app.route('/api/getGroceryList', methods=['GET'])
 @token_required
 def viewListData(current_user):
     groupList=GroceryList.query.filter_by(list_id=current_user.groceryList).first()
 
     if groupList:
-        list_data={}
+        list_data = {}
         list_data['list_id']=groupList.list_id
         list_data['GroceryName']=groupList.GroceryName
         list_data['date']=groupList.dateCreated
@@ -220,10 +234,11 @@ def viewListData(current_user):
     else:
         return jsonify(message="You don't have a list")
 
+
 @app.route('/api/getUser',methods=['GET'])
 @token_required
 def user(current_user):
-    user_data={}
+    user_data = {}
     user_data['firstName']=current_user.firstName
     user_data['lastName']=current_user.lastName
     user_data['email']=current_user.email
@@ -231,10 +246,11 @@ def user(current_user):
     
     return jsonify(message=user_data)
 
+
 @app.route('/api/register', methods=['POST'])
 def register():
-    data=request.json
-    emailUser=data['email']
+    data = request.json
+    emailUser = data['email']
 
     test=User.query.filter_by(email=emailUser).first()
 
@@ -244,7 +260,7 @@ def register():
     if data['password'] != data['confirmPassword']:
         return jsonify(message='Passwords do not match')
     else:
-        hashed_password=generate_password_hash(data['password'], method='sha256')
+        hashed_password = generate_password_hash(data['password'], method='sha256')
         new_user=User(
                              public_id=str(uuid.uuid4()),
                              firstName=data['firstName'],
@@ -259,12 +275,11 @@ def register():
         return jsonify(message='User Created'),201
 
 
-
 @app.route('/api/login', methods=['POST'])
 def login():
-    login=request.json
+    login = request.json
 
-    user=User.query.filter_by(email=login['email']).first()
+    user = User.query.filter_by(email=login['email']).first()
 
     if not user:
         return jsonify(message='A user with this email does not exist.')
@@ -274,8 +289,7 @@ def login():
     else:
         return jsonify(message='Your email or password is incorrect'),401
 
-    
-  
+
 if __name__ == '__main__':
     app.debug=True
     app.run()
