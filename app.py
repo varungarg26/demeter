@@ -71,6 +71,7 @@ class GroceryList(db.Model):
     GroceryName=Column(String(50))
     dateCreated=Column(String())
     picked=Column(Boolean)
+    userPickerUp=Column(String)
 
     
 class Item(db.Model):
@@ -116,7 +117,8 @@ def portfolioCreate(current_user):
                 list_id=val,
                 GroceryName=gList['ListName'],
                 dateCreated=datetime.datetime.now(),
-                picked=False
+                picked=False,
+                userPickerUp=""
         )
         current_user.groceryList=val
         db.session.add(groceryList)
@@ -172,7 +174,7 @@ def viewList(current_user,grocery_list):
 
 @app.route('/api/addtoList/<grocery_list>', methods=['POST'])
 @token_required
-def addtoList(current_user,grocery_list):
+def addtoList(current_user,grocery_list)S
 
     new=request.json
     newItem=Item(
@@ -199,6 +201,7 @@ def addUsertoList(current_user,grocery_list):
 def volunteer(current_user):
     groupList=GroceryList.query.filter_by(list_id=current_user.groceryList).first()
     groupList.picked=True
+    groupList.pickerUser=current_user.firstName
     db.session.commit()
     return jsonify(message="User has Volunteered")
 
@@ -215,6 +218,7 @@ def viewListData(current_user):
         list_data['GroceryName']=groupList.GroceryName
         list_data['date']=groupList.dateCreated
         list_data['picked']=groupList.picked
+        list_data['pickerUser']=groupList.userPickerUp
         
         return jsonify(message=list_data)
     else:
