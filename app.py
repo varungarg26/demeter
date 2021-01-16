@@ -72,7 +72,6 @@ class GroceryList(db.Model):
     
 class Item(db.Model):
     id=Column(Integer,primary_key=True)
-    user_id=Column(String(50))
     list_id=Column(String(50))
     item_id=Column(String(50),unique=True)
     Username=Column(String())
@@ -119,7 +118,25 @@ def portfolioCreate(current_user):
         db.session.add(groceryList)
         db.session.commit()
         return jsonify(message="List Created"),201
-@app.route('/api/addUsertoList/<grocery_list>')
+
+@app.route('/api/addtoList/<grocery_list>', methods=['POST'])
+@token_required
+def addtoList(current_user,grocery_list):
+
+    new=request.json
+    newItem=Item(
+                Username=current_user.firstName,
+                list_id=grocery_list,
+                item_id=str(uuid.uuid4()),
+                ItemName=new['ItemName'],
+                Quantity=new['Quantity'],
+                Comments=new['Comments']
+        )
+    db.session.add(newItem)
+    db.session.commit()
+    return jsonify(message="Item Added"),201
+
+@app.route('/api/addUsertoList/<grocery_list>',methods=['POST'])
 @token_required
 def addUsertoList(current_user,grocery_list):
     current_user.groceryList=grocery_list
