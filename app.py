@@ -70,6 +70,8 @@ class GroceryList(db.Model):
     list_id=Column(String(50),unique=True)
     GroceryName=Column(String(50))
     dateCreated=Column(String())
+    picked=Column(Boolean)
+
     
 class Item(db.Model):
     id=Column(Integer,primary_key=True)
@@ -113,13 +115,37 @@ def portfolioCreate(current_user):
         groceryList=GroceryList(
                 list_id=val,
                 GroceryName=gList['ListName'],
-                dateCreated=datetime.datetime.now()
+                dateCreated=datetime.datetime.now(),
+                picked=False
         )
         current_user.groceryList=val
         db.session.add(groceryList)
         db.session.commit()
         return jsonify(message="List Created"),201
-        
+
+@app.route('/api/viewListforUser/<grocery_list>', methods=['GET'])
+@token_required
+def viewListUser(current_user,grocery_list):
+    
+    groupList=GroceryList.query.filter_by(list_id=current_user.groceryList).all()
+    itemListAll=Item.query.filter_by(Username=current_user.firstName).all()
+    output=[]
+    allItems=[]
+    if groupList:
+        if itemListAll:
+            for items in itemListAll:
+                itemss={}
+                itemss['itemName']=items.ItemName
+                itemss['quantity']=items.Quantity
+                itemss['comment']=items.Comments
+                itemss['userName']=items.Username
+                allItems.append(itemss)
+            return jsonify(items=allItems)
+        else:
+            return jsonify(message="No items in the list")
+    else:
+        return jsonify (message="List not found")        
+
 @app.route('/api/viewList/<grocery_list>', methods=['GET'])
 @token_required
 def viewList(current_user,grocery_list):
@@ -167,6 +193,32 @@ def addUsertoList(current_user,grocery_list):
     current_user.groceryList=grocery_list
     db.session.commit()
     return jsonify(message="User Added to List")
+
+@app.route('/api/picked',methods=['GET'])
+@token_required
+def volunteer(current_user):
+    groupList=GroceryList.query.filter_by(list_id=current_user.groceryList).first()
+    groupList.picked=True
+    db.session.commit()
+    return jsonify(message="User has Volunteered")
+
+
+
+@app.route('/api/getGroceryList',methods=['GET'])
+@token_required
+def viewListData(current_user):
+    groupList=GroceryList.query.filter_by(list_id=current_user.groceryList).first()
+
+    if groupList:
+        list_data={}
+        list_data['list_id']=groupList.list_id
+        list_data['GroceryName']=groupList.GroceryName
+        list_data['date']=groupList.dateCreated
+        list_data['picked']=groupList.picked
+        
+        return jsonify(message=list_data)
+    else:
+        return jsonify(message="You don't have a list")
 
 @app.route('/api/getUser',methods=['GET'])
 @token_required
