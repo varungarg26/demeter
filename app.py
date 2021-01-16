@@ -72,8 +72,8 @@ class GroceryList(db.Model):
     
 class Item(db.Model):
     id=Column(Integer,primary_key=True)
-    list_id=Column(String(50))
     item_id=Column(String(50),unique=True)
+    list_id=Column(String(50))
     Username=Column(String())
     ItemName=Column(String())
     Quantity= Column(String())
@@ -204,6 +204,19 @@ def volunteer(current_user):
     groupList.userPickerUp=data['name']
     db.session.commit()
     return jsonify(message="User has Volunteered")
+
+@app.route('/api/removeFromList/<itemid>', methods=['DELETE'])
+@token_required
+def removeFromList(current_user, itemid):
+
+    removeItem = Item.query.filter_by(list_id=current_user.groceryList,item_id=itemid).first()
+
+    if removeItem:
+        db.session.delete(removeItem)
+        db.sessiom.commit()
+        return jsonify(message="Item has been removed")
+    else:
+        return jsonify(message="Item does not exist")
 
 @app.route('/api/gotItems',methods=['GET'])
 @token_required
