@@ -120,12 +120,12 @@ def portfolioCreate(current_user):
         db.session.commit()
         return jsonify(message="List Created"),201
         
-@app.route('/api/viewList', methods=['GET'])
+@app.route('/api/viewList/<grocery_list>', methods=['GET'])
 @token_required
-def viewList(current_user):
+def viewList(current_user,grocery_list):
     
     groupList=GroceryList.query.filter_by(list_id=current_user.groceryList).all()
-    itemListAll=Item.query.filter_by(list_id=current_user.groceryList).all()
+    itemListAll=Item.query.filter_by().all()
     output=[]
     allItems=[]
     if groupList:
@@ -133,8 +133,9 @@ def viewList(current_user):
             for items in itemListAll:
                 itemss={}
                 itemss['itemName']=items.ItemName
-                items['quantity']=items.Quantity
-                items['comment']=items.comment
+                itemss['quantity']=items.Quantity
+                itemss['comment']=items.Comments
+                itemss['userName']=items.Username
                 allItems.append(itemss)
             return jsonify(items=allItems)
         else:
@@ -224,4 +225,5 @@ def login():
     
   
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.debug=True
+    app.run()
