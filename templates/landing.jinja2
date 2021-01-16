@@ -1,0 +1,22 @@
+{% extends 'base.jinja2' %}
+
+{% block head %}
+
+
+<style>
+
+</style>
+{% endblock %}
+
+<body>
+{% block content %}
+    <div class="page-wrapper" >
+        <div class="title-wrapper">
+        <div class="bg-wrapper">
+            <h1>Demeter</h1>
+            <a class="btn" href="{{ url_for('login_page') }}" role="button">Login</a>
+        </div>
+        </div>
+    </div>
+{% endblock %}
+</body>

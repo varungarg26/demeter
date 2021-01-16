@@ -9,7 +9,7 @@ import sendgrid
 from sendgrid.helpers.mail import *
 import json
 import os
-import addon
+#import addon
 import uuid
 from werkzeug.security import generate_password_hash, check_password_hash
 import jwt
@@ -84,18 +84,23 @@ class Item(db.Model):
 def token_required(f):
     @wraps(f)
     def decorated(*args,**kwargs):
-        token=None
-        if 'x-access-tokens' in request.headers:
-            token=request.headers['x-access-tokens']
-        if not token:
-            return jsonify(message='Token is missing'),401
-        try:
-            data=jwt.decode(token, app.config['SECRET_KEY'])
-            current_user=User.query.filter_by(public_id=data['public_id']).first()
-        except:
-            return jsonify(message='Token is invalid'),401
+        token = None
+        if 'token' not in session:
+            return render_template('need-to-login-error.jinja2')
+        else:
+            if session is None:
+                return render_template('need-to-login-error.jinja2')
+            if 'cookie' in request.headers:
+                token=session['token']
+            if 'cookie' not in request.headers:
+                return jsonify(message='Token is missing'),401
+            try:
+                data=jwt.decode(token, app.config['SECRET_KEY'])
+                current_user=User.query.filter_by(public_id=data['public_id']).first()
+            except:
+                return jsonify(message='Token is invalid'),401
 
-        return f(current_user, *args, **kwargs)
+            return f(current_user, *args, **kwargs)
     return decorated
 
 @app.route('/api/groceryList', methods=['POST'])
@@ -120,7 +125,7 @@ def portfolioCreate(current_user):
 
 @app.route('/api/register', methods=['POST'])
 def register():
-    data=request.json
+    data=request.form
     emailUser=data['email']
 
     test=User.query.filter_by(email=emailUser).first()
@@ -149,19 +154,34 @@ def register():
 
 @app.route('/api/login', methods=['POST'])
 def login():
-    login=request.json
+    login=request.form
 
     user=User.query.filter_by(email=login['email']).first()
 
     if not user:
         return jsonify(message='A user with this email does not exist.')
     if check_password_hash(user.password,login['password']):
-        token=jwt.encode({'public_id': user.public_id,'exp':datetime.datetime.utcnow()+datetime.timedelta(minutes=30)}, app.config['SECRET_KEY'])
-        return jsonify(token=token.decode('UTF-8'))
+        token = jwt.encode({'public_id': user.public_id, 'exp': datetime.datetime.utcnow() + datetime.timedelta(minutes=30)}, app.config['SECRET_KEY'])
+        session['token'] = token
+        #redir = redirect(url_for('user'))
+        #redir.headers['x-access-tokens'] = token
+        return "Success"
     else:
         return jsonify(message='Your email or password is incorrect'),401
 
-    
-  
+
+@app.route('/api/register')
+def register_page():
+    return render_template('register.jinja2')
+
+@app.route('/api/login')
+def login_page():
+    return render_template('login.jinja2')
+
+@app.route('/')
+def homepage():
+    return render_template('landing.jinja2')
+
+
 if __name__ == '__main__':
     app.run(debug=True)
