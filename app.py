@@ -1,3 +1,4 @@
+import flask
 from flask import Flask,render_template, request, jsonify, make_response, url_for,redirect
 from flask_sqlalchemy import SQLAlchemy
 from flask_jwt_extended import JWTManager,jwt_required,create_access_token
@@ -6,18 +7,16 @@ from sqlalchemy import Column, Integer,String, Float, Boolean
 from itsdangerous import URLSafeTimedSerializer, SignatureExpired
 import sendgrid
 from sendgrid.helpers.mail import *
-
-import pickle
-import numpy as np
 import json
 import os
+import addon
 import uuid
 from werkzeug.security import generate_password_hash, check_password_hash
 import jwt
 import datetime
 import requests
 from functools import wraps
-import re 
+from flask import Flask, session
 
 app = Flask(__name__)
 basedir = os.path.abspath(os.path.dirname(__file__))
@@ -63,30 +62,61 @@ class User(db.Model):
     email=Column(String(50), unique=True)
     phoneNumber=Column(Integer)
     password=Column(String(50))
+    groceryList=Column(String(50))
 
-
+class GroceryList(db.Model):
+    id=Column(Integer,primary_key=True)
+    list_id=Column(String(50),unique=True)
+    GroceryName=Column(String(50))
+    dateCreated=Column(String())
+    
+class Item(db.Model):
+    id=Column(Integer,primary_key=True)
+    user_id=Column(String(50))
+    list_id=Column(String(50))
+    item_id=Column(String(50),unique=True)
+    Username=Column(String())
+    ItemName=Column(String())
+    Quantity= Column(String())
+    Comments=Column(String())
+   
     
 def token_required(f):
     @wraps(f)
     def decorated(*args,**kwargs):
-        token = None
-        if 'token' not in session:
-            return render_template('need-to-login-error.jinja2')
-        else:
-            if session is None:
-                return render_template('need-to-login-error.jinja2')
-            if 'cookie' in request.headers:
-                token=session['token']
-            if 'cookie' not in request.headers:
-                return jsonify(message='Token is missing'),401
-            try:
-                data=jwt.decode(token, app.config['SECRET_KEY'])
-                current_user=User.query.filter_by(public_id=data['public_id']).first()
-            except:
-                return jsonify(message='Token is invalid'),401
+        token=None
+        if 'x-access-tokens' in request.headers:
+            token=request.headers['x-access-tokens']
+        if not token:
+            return jsonify(message='Token is missing'),401
+        try:
+            data=jwt.decode(token, app.config['SECRET_KEY'])
+            current_user=User.query.filter_by(public_id=data['public_id']).first()
+        except:
+            return jsonify(message='Token is invalid'),401
 
-            return f(current_user, *args, **kwargs)
+        return f(current_user, *args, **kwargs)
     return decorated
+
+@app.route('/api/groceryList', methods=['POST'])
+@token_required
+def portfolioCreate(current_user):
+    user_data={}
+    user_data['public_id']=current_user.public_id
+
+    gList=request.json
+    g=GroceryList.query.filter_by(GroceryName=gList['ListName']).first()
+    if g:
+        return jsonify(message="List with the same name exists"),401
+    else:
+        groceryList=GroceryList(
+                list_id=str(uuid.uuid4()),
+                GroceryName=gList['ListName'],
+                dateCreated=datetime.datetime.now()
+        )
+        db.session.add(groceryList)
+        db.session.commit()
+        return jsonify(message="List Created"),201
 
 @app.route('/api/register', methods=['POST'])
 def register():
@@ -97,11 +127,7 @@ def register():
 
     if test:
         return jsonify(message='A user with this email already exists.'), 409
-    if data['firstName']=="":
-        return jsonify(message="Enter a first name")
-    if data['lastName']=="":
-        return jsonify(message="Enter a last name")
-    
+
     if data['password'] != data['confirmPassword']:
         return jsonify(message='Passwords do not match')
     else:
@@ -111,25 +137,10 @@ def register():
                              firstName=data['firstName'],
                              lastName=data['lastName'],
                              email=data['email'],
-                             healthCard=data['healthCard'],
                              phoneNumber=data['phoneNumber'],
-                             password=hashed_password,
-                             confirmedEmail=False,
-                             confirmedOn=None
+                             password=hashed_password
                              )
-        email = data['email']
-        from_email = Email("diabetesd0@gmail.com")
-        to_email=To(email)
-        subject="Verify your email"
-        token = s.dumps(email, salt='email-confirm')
-        link = url_for('confirm_email', token=token, _external=True)
-        content=Content("text/plain", "Your link is {}".format(link))
-        mail = Mail(from_email, to_email, subject, content)
-
-        response = sg.client.mail.send.post(request_body=mail.get())
-        print(response.status_code)
-        print(response.body)
-        print(response.headers)
+    
         db.session.add(new_user)
         db.session.commit()
         return jsonify(message='User Created'),201
@@ -149,7 +160,6 @@ def login():
         return jsonify(token=token.decode('UTF-8'))
     else:
         return jsonify(message='Your email or password is incorrect'),401
-
 
     
   
