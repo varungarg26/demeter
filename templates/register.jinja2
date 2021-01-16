@@ -1,0 +1,149 @@
+{% extends 'base.jinja2' %}
+
+{% block head %}
+
+
+<style>
+
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+a, a:visited{
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+body{
+    padding: 0 125px;
+    font-family: 'Bai Jamjuree', sans-serif;
+    padding-top: 10px;
+}
+
+.main{
+    max-width: 800px;
+    margin: 0 auto;
+    padding-top: 10%;
+}
+
+.mainText{
+    font-size: 2.5em;
+    font-weight: bold;
+    text-align: center;
+}
+
+.subText{
+    font-size: 1.3em;
+    text-transform: lowercase;
+    text-align: center;
+}
+
+.fName, .lName, .email, .password, .password2{
+    font-size: 1.1em;
+    outline: none;
+    border: none;
+    border: 1px solid #292929;
+    border-radius: 8px;
+    padding: 4px 8px 4px 8px;
+}
+
+.row1, .row2, .row3, .row4, .row5{
+    max-width: 430px;
+    margin: 0 auto;
+}
+
+.row1{
+    margin-top: 30px;
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 12px;
+}
+
+.email{
+    width: 100%;
+}
+
+.row3{
+    display: flex;
+    justify-content: space-between;
+    margin-top: 12px;
+
+}
+
+.row4{
+    margin-top: 20px;
+    display: flex;
+    justify-content: center;
+}
+
+.row5{
+    display: flex;
+    justify-content: center;
+}
+
+.row5 p{
+    margin-top: 20px;
+    align-text: center;
+    display: inline-block;
+}
+
+
+
+.heroButton{
+    border: 1px solid #292929;
+    border-radius: 5px;
+    font-size: 1.1em;
+    padding: 4px 12px;
+    text-transform: lowercase;
+    display: inline-block;
+}
+
+.signupButton{
+    background-color: #D2EA9B;
+}
+
+.loginButton{
+    border: none;
+    background: none;
+    color: #89966A;
+    cursor: pointer;
+}
+
+.footer{
+    display: none;
+}
+
+
+</style>
+{% endblock %}
+
+<body>
+{% block content %}
+    <div class="main" >
+            <form class="form-signin" method="POST">
+                <h1 class="mainText">Get Started with Demeter</h1>
+                <p class="subText">The safer way to shop</p>
+                <div class="row1">
+                <input  type="text" id="firstName" name="firstName" class="fName" placeholder="First Name" required autofocus>
+                <input  type="text" name="lastName" id="lastName" class="lName" placeholder="Last Name" required>
+                </div>
+                <div class="row2">
+                <input  type="email" id="email" name="email" class="email" placeholder="Email address" required autofocus>
+                </div>
+                <div class="row3">
+                <input  type="password" name="password" id="password" class="password" placeholder="Password" required>
+                <input  type="password" name="confirmPassword" id="confirmPassword" class="password" placeholder="Confirm Password" required>
+                </div>
+                <div class="row4">
+                <a href="{{ url_for('login') }}"><button class="heroButton signupButton">Register</button></a>
+                </div>
+            </form>
+            <div class="row5">
+            <p>Already have an account? <a href="{{ url_for('login_page') }}"><button class="inlineButton loginButton">Login</button></a>!</p>
+            </div>
+    </div>
+{% endblock %}
+</body>
