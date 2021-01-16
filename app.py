@@ -23,10 +23,6 @@ basedir = os.path.abspath(os.path.dirname(__file__))
 app.config['SQLALCHEMY_DATABASE_URI']='sqlite:///' + os.path.join(basedir,'users.db')
 app.config['SECRET_KEY']='secret-key'
 
-
-
-
-
 s = URLSafeTimedSerializer('SECRET_KEY')
 
 db=SQLAlchemy(app)
@@ -164,6 +160,7 @@ def viewList(current_user,grocery_list):
                 itemss['quantity']=items.Quantity
                 itemss['comment']=items.Comments
                 itemss['userName']=items.Username
+                itemss['id']=items.item_id
                 allItems.append(itemss)
             return jsonify(items=allItems)
         else:
@@ -172,9 +169,10 @@ def viewList(current_user,grocery_list):
         return jsonify (message="List not found")
 
 
+
 @app.route('/api/addtoList/<grocery_list>', methods=['POST'])
 @token_required
-def addtoList(current_user,grocery_list)S
+def addtoList(current_user,grocery_list):
 
     new=request.json
     newItem=Item(
@@ -199,13 +197,20 @@ def addUsertoList(current_user,grocery_list):
 @app.route('/api/picked',methods=['GET'])
 @token_required
 def volunteer(current_user):
+    data={}
+    data['name']=current_user.firstName
     groupList=GroceryList.query.filter_by(list_id=current_user.groceryList).first()
     groupList.picked=True
-    groupList.pickerUser=current_user.firstName
+    groupList.userPickerUp=data['name']
     db.session.commit()
     return jsonify(message="User has Volunteered")
 
-
+@app.route('/api/gotItems',methods=['GET'])
+@token_required
+def gotItems(current_user):
+    current_user.groceryList=None
+    db.session.commit()
+    return jsonify(message="You have left the list")
 
 @app.route('/api/getGroceryList',methods=['GET'])
 @token_required
