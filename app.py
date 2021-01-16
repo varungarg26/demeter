@@ -109,14 +109,27 @@ def portfolioCreate(current_user):
     if g:
         return jsonify(message="List with the same name exists"),401
     else:
+        val=str(uuid.uuid4())
         groceryList=GroceryList(
-                list_id=str(uuid.uuid4()),
+                list_id=val,
                 GroceryName=gList['ListName'],
                 dateCreated=datetime.datetime.now()
         )
+        current_user.groceryList=val
         db.session.add(groceryList)
         db.session.commit()
         return jsonify(message="List Created"),201
+
+@app.route('/api/getUser',methods=['GET'])
+@token_required
+def user(current_user):
+    user_data={}
+    user_data['firstName']=current_user.firstName
+    user_data['lastName']=current_user.lastName
+    user_data['email']=current_user.email
+    user_data['groceryList']=current_user.groceryList
+    
+    return jsonify(message=user_data)
 
 @app.route('/api/register', methods=['POST'])
 def register():
