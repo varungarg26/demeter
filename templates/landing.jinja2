@@ -4,19 +4,166 @@
 
 
 <style>
-
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+a, a:visited{
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+}
+body{
+    padding: 0 125px;
+    font-family: 'Bai Jamjuree', sans-serif;
+    padding-top: 10px;
+}
+.nav{
+    max-height: 8vh;
+    height: 8vh;
+}
+.logoContainer{
+    max-height: 100%;
+}
+.logoImage{
+    height: 100%;
+}
+.heroContent{
+    position: relative;
+    top: calc(-8vh - 10px);
+    width: 100%;
+    height: 100vh;
+    background-image: url("../static/icon-background.svg");
+    background-repeat: no-repeat;
+    background-position: center center;
+    background-size: contain;
+    display: flex;
+    flex-direction: column;
+    justify-items: center;
+    justify-content: center;
+}
+.heroText{
+    text-align: center;
+    margin-bottom: 40px;
+}
+.heroText h4{
+    font-size: 2.3em;
+    font-weight: 500;
+    color: #292929;
+    line-height: 1.8em;
+}
+.heroMain{
+    font-size: 6em;
+    font-weight: bold;
+    color: #292929;
+}
+.ctaContainer{
+    display: inline-block;
+    margin: 0 auto;
+    margin-bottom: 40px;
+}
+.heroButton{
+    border: 1px solid #292929;
+    border-radius: 5px;
+    font-size: 1.3em;
+    padding: 4px 12px;
+    text-transform: lowercase;
+    display: inline-block;
+}
+.signupButton{
+    background-color: #D2EA9B;
+    margin-right: 30px;
+}
+.loginButton:hover{
+    background-color: #D2EA9B;
+}
+.pitchSection{
+    width: 80%;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+}
+.card{
+    width: 25%;
+    border: 1px solid #292929;
+    padding: 15px 12px 15px 12px;
+}
+.cardImageContainer{
+    width: 100%;
+    display: flex;
+    justify-content: center;
+}
+.cardImage{
+    width: 60%
+}
+.cardText{
+padding-top: 20px;
+}
+.footer{
+    background-color: #D2EA9B;
+    margin-top: 80px;
+    text-align: center;
+}
 </style>
 {% endblock %}
 
 <body>
 {% block content %}
-    <div class="page-wrapper" >
-        <div class="title-wrapper">
-        <div class="bg-wrapper">
-            <h1>Demeter</h1>
-            <a class="btn" href="{{ url_for('login_page') }}" role="button">Login</a>
+
+    <nav class="nav">
+        <div class="logoContainer">
+            <img class="logoImage" src="../static/demeter-logo.svg" alt="Demeter Logo"/>
         </div>
+    </nav>
+
+    <section class="heroContent">
+        <div class="heroText">
+            <h4 class="heroPrefix">welcome to</h4>
+            <h1 class="heroMain">Demeter</h1>
+            <h4 class="heroSuffix">the safer way to shop</h4>
         </div>
-    </div>
+        <div class="ctaContainer">
+            <a class="heroButton signupButton" href="{{ url_for('register_page') }}">Sign Up</a>
+            <a class="heroButton loginButton" href="{{ url_for('login_page') }}">Login</a>
+        </div>
+    </section>
+
+    <section class="pitchSection">
+        <div class="card">
+            <div class="cardImageContainer">
+                <img class="cardImage" src="../static/safety-suit.svg" alt="Covid-19 Protection"/>
+            </div>
+            <div class="cardText">
+                <p>Reduce exposure with others and decrease risks of getting Covid-19.</p>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="cardImageContainer">
+                <img class="cardImage" src="../static/hands.svg" alt="Driving Image"/>
+            </div>
+            <div class="cardText">
+                <p>Avoid having to make multiple trips to nearby stores. Plan efficiently and use your time wisely!</p>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="cardImageContainer">
+                <img class="cardImage" src="../static/friends.svg" alt="Image of Friends"/>
+            </div>
+            <div class="cardText">
+                <p>Make it so much easier to shop with friends and stay organized!</p>
+            </div>
+        </div>
+    </section>
+
+
+
+
+
+
+
 {% endblock %}
 </body>

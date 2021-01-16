@@ -1,4 +1,4 @@
-{% extends 'base.jinja2' %}
+{% extends 'base2.jinja2' %}
 
 {% block head %}
 
@@ -34,7 +34,7 @@ body{
     text-transform: lowercase;
     text-align: center;
 }
-.fName, .lName, .email, .password, .password2{
+.fName, .lName, .email, .password, .password2, .ListName ,.groceryList{
     font-size: 1.1em;
     outline: none;
     border: none;
@@ -52,7 +52,7 @@ body{
     justify-content: space-between;
     margin-bottom: 12px;
 }
-.email, .password{
+.email, .password, .ListName{
     width: 100%;
 }
 .row3{
@@ -60,7 +60,25 @@ body{
     justify-content: center;
     margin-top: 12px;
 }
+
+.row2{
+    display: flex;
+    justify-content: center;
+    margin-top: 12px;
+}
+
+.other{
+    display: flex;
+    justify-content: center;
+}
+
 .row4{
+    margin-top: 20px;
+    display: flex;
+    justify-content: center;
+}
+
+.row5{
     margin-top: 20px;
     display: flex;
     justify-content: center;
@@ -93,22 +111,27 @@ body{
 {% block content %}
     <div class="main" >
         <form class="form-signin" method="POST">
-            <h1 class="mainText">Welcome Back!</h1>
-            <p class="subText">We're Glad to See You Again</p>
+            <h1 class="mainText">Create a Grocery Group!</h1>
+            <p class="subText">Get Ready to Revolutionize Shopping</p>
             <div class="row1">
-            <input  type="email" id="email" name="email" class="email" placeholder="Email address" required autofocus>
+                <input  type="text" id="ListName" name="ListName" class="ListName" placeholder="List Name" required autofocus>
+
             </div>
             <div class="row2">
-            <input  type="password" name="password" id="inputPassword" class="password" placeholder="Password" required>
-            </div>
-            <div class="row3">
-            <a href="{{ url_for('login') }}"><button class="heroButton signupButton">Sign In</button></a>
+                <a href="{{ url_for('listCreate') }}"><button class="heroButton signupButton">Create</button></a>
             </div>
         </form>
-        <div class="row4">
-        <p>Don't have an account? <a href="{{ url_for('register_page') }}"><button class="inlineButton loginButton">Sign up</button></a>!</p>
-        </div>
-
+        <form class="form-create" method="POST">
+            <div class="row3">
+                 <p class="other">Have a group ID? Enter it below</p>
+            </div>
+            <div class="row4">
+                <input  type="text" id="groceryList" name="groceryList" class="groceryList" placeholder="Grocery List" required autofocus>
+            </div>
+            <div class="row5">
+                <a href="{{ url_for('addUsertoList') }}"><button class="heroButton signupButton">Join</button></a>
+            </div>
+        </form>
     </div>
 {% endblock %}
 </body>

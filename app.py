@@ -69,6 +69,9 @@ class GroceryList(db.Model):
     list_id=Column(String(50),unique=True)
     GroceryName=Column(String(50))
     dateCreated=Column(String())
+    picked=Column(Boolean())
+    userPickerUp=Column(String(50))
+
     
 class Item(db.Model):
     id=Column(Integer,primary_key=True)
@@ -105,11 +108,11 @@ def token_required(f):
 
 @app.route('/api/groceryList', methods=['POST'])
 @token_required
-def portfolioCreate(current_user):
+def listCreate(current_user):
     user_data={}
     user_data['public_id']=current_user.public_id
 
-    gList=request.json
+    gList=request.form
     g=GroceryList.query.filter_by(GroceryName=gList['ListName']).first()
     if g:
         return jsonify(message="List with the same name exists"),401
@@ -117,11 +120,168 @@ def portfolioCreate(current_user):
         groceryList=GroceryList(
                 list_id=str(uuid.uuid4()),
                 GroceryName=gList['ListName'],
-                dateCreated=datetime.datetime.now()
+                dateCreated=datetime.datetime.now(),
+                picked=False,
+                userPickerUp="none"
         )
         db.session.add(groceryList)
         db.session.commit()
+
+        groceryGroup = GroceryList.query.filter_by(GroceryName=gList['ListName']).first()
+        current_user.groceryList = groceryGroup.list_id
+
+        db.session.commit()
+
         return jsonify(message="List Created"),201
+
+@app.route('/api/groceryList')
+@token_required
+def createList(current_user):
+    return render_template('createList.jinja2')
+
+@app.route('/api/viewListforUser/<grocery_list>', methods=['GET'])
+@token_required
+def viewListUser(current_user, grocery_list):
+    groupList = GroceryList.query.filter_by(list_id=current_user.groceryList).all()
+    itemListAll = Item.query.filter_by(Username=current_user.firstName).all()
+    output = []
+    allItems = []
+    if groupList:
+        if itemListAll:
+            for items in itemListAll:
+                itemss = {}
+                itemss['itemName'] = items.ItemName
+                itemss['quantity'] = items.Quantity
+                itemss['comment'] = items.Comments
+                itemss['userName'] = items.Username
+                allItems.append(itemss)
+            return jsonify(items=allItems)
+        else:
+            return jsonify(message="No items in the list")
+    else:
+        return jsonify(message="List not found")
+
+
+@app.route('/api/viewList/<grocery_list>', methods=['GET'])
+@token_required
+def viewList(current_user, grocery_list):
+    groupList = GroceryList.query.filter_by(list_id=current_user.groceryList).all()
+    itemListAll = Item.query.filter_by().all()
+    output = []
+    allItems = []
+    if groupList:
+        if itemListAll:
+            for items in itemListAll:
+                itemss = {}
+                itemss['itemName'] = items.ItemName
+                itemss['quantity'] = items.Quantity
+                itemss['comment'] = items.Comments
+                itemss['userName'] = items.Username
+                itemss['id'] = items.item_id
+                allItems.append(itemss)
+            return jsonify(items=allItems)
+        else:
+            return jsonify(message="No items in the list")
+    else:
+        return jsonify(message="List not found")
+
+
+@app.route('/api/addtoList/<grocery_list>', methods=['POST'])
+@token_required
+def addtoList(current_user, grocery_list):
+    new = request.form
+    newItem = Item(
+        Username=current_user.firstName,
+        list_id=grocery_list,
+        item_id=str(uuid.uuid4()),
+        ItemName=new['ItemName'],
+        Quantity=new['Quantity'],
+        Comments=new['Comments']
+    )
+    db.session.add(newItem)
+    db.session.commit()
+    return jsonify(message="Item Added"), 201
+
+
+@app.route('/api/addUsertoList/', methods=['POST'])
+@token_required
+def addUsertoList(current_user):
+    add = request.form
+    current_user.groceryList = add['groceryList']
+    db.session.commit()
+    return jsonify(message="User Added to List")
+
+
+
+@app.route('/api/picked', methods=['GET'])
+@token_required
+def volunteer(current_user):
+    data = {}
+    data['name'] = current_user.firstName
+    groupList = GroceryList.query.filter_by(list_id=current_user.groceryList).first()
+    groupList.picked = True
+    groupList.userPickerUp = data['name']
+    db.session.commit()
+    return jsonify(message="User has Volunteered")
+
+
+@app.route('/api/removeFromList/<itemid>', methods=['DELETE'])
+@token_required
+def removeFromList(current_user, itemid):
+    removeItem = Item.query.filter_by(list_id=current_user.groceryList, item_id=itemid).first()
+
+    if removeItem:
+        db.session.delete(removeItem)
+        db.sessiom.commit()
+        return jsonify(message="Item has been removed")
+    else:
+        return jsonify(message="Item does not exist")
+
+
+@app.route('/api/gotItems', methods=['GET'])
+@token_required
+def gotItems(current_user):
+    current_user.groceryList = None
+    db.session.commit()
+    return jsonify(message="You have left the list")
+
+
+@app.route('/api/getGroceryList', methods=['GET'])
+@token_required
+def viewListData(current_user):
+    groupList = GroceryList.query.filter_by(list_id=current_user.groceryList).first()
+
+    user_data = {}
+    user_data['firstName'] = current_user.firstName
+    user_data['lastName'] = current_user.lastName
+    user_data['email'] = current_user.email
+    user_data['phoneNumber'] = current_user.phoneNumber
+    session['userData'] = user_data
+
+    if groupList:
+        list_data = {}
+        list_data['list_id'] = groupList.list_id
+        list_data['GroceryName'] = groupList.GroceryName
+        list_data['date'] = groupList.dateCreated
+        list_data['picked'] = groupList.picked
+        list_data['pickerUser'] = groupList.userPickerUp
+
+        return render_template('dashboard.jinja2')
+        return jsonify(message=list_data)
+    else:
+        return redirect(url_for('createList'))
+
+@app.route('/api/getUser', methods=['GET'])
+@token_required
+def user(current_user):
+    user_data = {}
+    user_data['firstName'] = current_user.firstName
+    user_data['lastName'] = current_user.lastName
+    user_data['email'] = current_user.email
+    user_data['groceryList'] = current_user.groceryList
+
+    return jsonify(message=user_data)
+
 
 @app.route('/api/register', methods=['POST'])
 def register():
@@ -148,7 +308,8 @@ def register():
     
         db.session.add(new_user)
         db.session.commit()
-        return jsonify(message='User Created'),201
+        return redirect(url_for('login_page'))
+        #return jsonify(message='User Created'),201
 
 
 
@@ -163,9 +324,10 @@ def login():
     if check_password_hash(user.password,login['password']):
         token = jwt.encode({'public_id': user.public_id, 'exp': datetime.datetime.utcnow() + datetime.timedelta(minutes=30)}, app.config['SECRET_KEY'])
         session['token'] = token
-        #redir = redirect(url_for('user'))
-        #redir.headers['x-access-tokens'] = token
-        return "Success"
+        redir = redirect(url_for('viewListData'))
+        redir.headers['x-access-tokens'] = token
+
+        return redir
     else:
         return jsonify(message='Your email or password is incorrect'),401
 
@@ -177,6 +339,17 @@ def register_page():
 @app.route('/api/login')
 def login_page():
     return render_template('login.jinja2')
+
+@app.route('/api/profile')
+
+def profile():
+    return render_template('profile.jinja2', userdata=session['userData'])
+
+@app.route('/api/logout')
+def logout():
+    session.pop('token', None)
+    session.pop('userData', None)
+    return redirect(url_for('homepage'))
 
 @app.route('/')
 def homepage():
