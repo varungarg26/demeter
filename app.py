@@ -5,16 +5,9 @@ from flask_jwt_extended import JWTManager,jwt_required,create_access_token
 from flask_mail import Mail, Message
 from sqlalchemy import Column, Integer,String, Float, Boolean
 from itsdangerous import URLSafeTimedSerializer, SignatureExpired
-import sendgrid
+import sendgrid, json, os, addon, uuid, jwt, datetime, requests, smtplib
 from sendgrid.helpers.mail import *
-import json
-import os
-import addon
-import uuid
 from werkzeug.security import generate_password_hash, check_password_hash
-import jwt
-import datetime
-import requests
 from functools import wraps
 from flask import Flask, session
 
@@ -39,17 +32,17 @@ def db_drop():
 @app.cli.command('dbSeed')
 def db_seed():
     hashed_password=generate_password_hash('password', method='sha256')
-    testUser=User(firstName='User',
+    testUser = User(firstName='User',
                     lastName='Test',
-                             email='test@gmail.com',
-                             phoneNumber='4166666666',
-                             password=hashed_password,
-                             public_id=str(uuid.uuid4()),
-                             groceryList=""
-                             )
+                    email='test@gmail.com',
+                    phoneNumber='4166666666',
+                    password=hashed_password,
+                    public_id=str(uuid.uuid4()),
+                    groceryList="")
     db.session.add(testUser)
     db.session.commit()
     print('Seeded')
+
 
 class User(db.Model):
     id=Column(Integer, primary_key=True)
@@ -78,7 +71,10 @@ class Item(db.Model):
     ItemName=Column(String())
     Quantity= Column(String())
     Comments=Column(String())
-   
+
+
+@app.route('api/emailInvite', methods=['POST'])
+
     
 def token_required(f):
     @wraps(f)
