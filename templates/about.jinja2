@@ -1,0 +1,288 @@
+{% extends 'base.jinja2' %}
+
+{% block head %}
+
+
+<style>
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+a, a:visited{
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+}
+body{
+    padding: 0 125px;
+    font-family: 'Bai Jamjuree', sans-serif;
+    padding-top: 10px;
+}
+.nav{
+    max-height: 8vh;
+    height: 8vh;
+}
+.logoContainer{
+    max-height: 100%;
+}
+.logoImage{
+    height: 100%;
+}
+.heroContent{
+    position: relative;
+    top: calc(-8vh - 10px);
+    width: 100%;
+    height: 100vh;
+    background-image: url("../static/icon-background.svg");
+    background-repeat: no-repeat;
+    background-position: center center;
+    background-size: contain;
+    display: flex;
+    flex-direction: column;
+    justify-items: center;
+    justify-content: center;
+}
+.heroText{
+    text-align: center;
+    margin-bottom: 40px;
+}
+.heroText h4{
+    font-size: 1.8em;
+    font-weight: 500;
+    color: #292929;
+    line-height: 1.8em;
+}
+.heroMain{
+    font-size: 5em;
+    font-weight: bold;
+    color: #292929;
+}
+.ctaContainer{
+    display: inline-block;
+    margin: 0 auto;
+    margin-bottom: 40px;
+}
+.heroButton{
+    border: 1px solid #292929;
+    border-radius: 5px;
+    font-size: 1.3em;
+    padding: 4px 12px;
+    text-transform: lowercase;
+    display: inline-block;
+}
+.signupButton{
+    background-color: #D2EA9B;
+    margin-right: 30px;
+}
+.loginButton:hover{
+    background-color: #D2EA9B;
+}
+.pitchSection{
+    width: 80%;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+}
+.card{
+    width: 25%;
+    border: 1px solid #292929;
+    padding: 15px 12px 15px 12px;
+}
+.cardImageContainer{
+    width: 100%;
+    display: flex;
+    justify-content: center;
+}
+.cardImage{
+    width: 60%
+}
+.cardText{
+padding-top: 20px;
+}
+
+
+
+
+
+
+.footer{
+    background-color: #D2EA9B;
+    margin-top: 80px;
+    text-align: center;
+}
+
+
+.infoSection{
+    width: 80%;
+    margin: 0 auto;
+}
+
+.infoCard p{
+    margin-bottom: 0;
+}
+
+.infoCard{
+    border: 1px solid lightgrey;
+    border-radius: 10px;
+    padding: 18px 20px;
+    margin-bottom: 5%;
+}
+
+.infoTitle{
+    font-size: 1.4em;
+    line-height: 40px;
+}
+
+.textContainer{
+    width: 70%;
+    padding-right: 20px;
+}
+
+.textContainer p{
+    line-height: 30px;
+}
+
+.imageContainer{
+    width: 30%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding-left: 20px;
+}
+
+.imageContainer .image{
+    width: 200px;
+    height: 150px;
+    border: 1px solid lightgrey;
+    border-radius: 10px;
+}
+
+.split{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.meaning .image{
+    background-image: url("../static/logo-2.svg");
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center center;
+}
+
+
+.structure .image{
+    background-image: url("../static/coding-language.svg");
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center center;
+}
+
+.inspiration .image{
+    background-image: url("../static/virus.svg");
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center center;
+}
+
+.purpose .image{
+    background-image: url("../static/grocery.svg");
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center center;
+}
+
+</style>
+{% endblock %}
+
+<body>
+{% block content %}
+
+    <nav class="nav">
+        <div class="logoContainer">
+            <img class="logoImage" src="../static/demeter-logo.svg" alt="Demeter Logo"/>
+        </div>
+    </nav>
+
+    <section class="heroContent">
+
+        <div data-aos="fade-up" data-aos-duration="1200" class="heroText">
+            <h4 class="heroPrefix">learn a little bit more about</h4>
+            <h1 class="heroMain">Demeter</h1>
+        </div>
+
+    </section>
+
+    <section class="infoSection">
+
+        <div data-aos="fade-up" data-aos-duration="800" class="inspiration infoCard">
+            <div class="split">
+                <div class="textContainer">
+                    <h5 class="infoTitle">Our Inspiration</h5>
+                    <p>Over the course of the COVID-19 Pandemic, everyone's lives shifted drastically. However, we believe that hard times can bring out the best in us. As a result, we wanted to develop a tool that encourages people to stay home so that we can return to our normal lives once again and save the lives of our most vulnerable. With the understanding that the most common essential travel is for groceries, we set out to develop an app that makes it easier to work with your friends and family to get necessities without exposing yourself and others to the virus.</p>
+                </div>
+                <div class="imageContainer">
+                    <div class="image"></div>
+                </div>
+            </div>
+        </div>
+
+        <div data-aos="fade-up" data-aos-duration="800" class="meaning infoCard">
+            <div class="split">
+                <div class="textContainer">
+                    <h5 class="infoTitle">The meaning behind Demeter</h5>
+                    <p>Demeter is the Goddess of the Harvest and presides over the grains and fertility of the Earth. In these trying times, humanity's tendency to help those around us is on full display. We wanted our project to signify the best in humanity, those who come to the aid of others, and those who encourage us to be better. Much like Demeter giving the hope of a full harvest, we wanted to signify that better days are coming soon.</p>
+                </div>
+                <div class="imageContainer">
+                    <div class="image"></div>
+                </div>
+            </div>
+        </div>
+
+        <div data-aos="fade-up" data-aos-duration="800" class="purpose infoCard">
+            <div class="split">
+
+                <div class="textContainer">
+                    <h5 class="infoTitle">What does Demeter do?</h5>
+                    <p>Demeter is a Web Application accessed through logging into the website or registering as a new user. You are allowed to create a new group if you are not already in one or join an existing group. Once you are in a group, you can then post items from your grocery list onto one master grocery list for all members of the group to view. This is the list that the 'grocery picker' will refer to when at the store. In the group dashboard, there will be a button named "volunteer for pickup", which can be clicked by any member of the group. Once this button is clicked, the group members will be notified that a member of the group is going to the nearest grocery store to purchase groceries. On the 'grocery picker's' end, as they are purchasing groceries, they can remove purchased items from the list. Once they have purchased all the groceries, they can then deliver everyone's respective groceries to their doorstep! After the groceries are dropped off, the group will be disbanded and a new one can be created for the next grocery adventure!</p>
+                </div>
+                <div class="imageContainer">
+                    <div class="image"></div>
+                </div>
+            </div>
+        </div>
+
+        <div data-aos="fade-up" data-aos-duration="800" class="structure infoCard">
+            <div class="split">
+                <div class="textContainer">
+                    <h5 class="infoTitle">How we built Demeter</h5>
+                    <p>When we set out to make Demeter, we focused on three main principles: Simplicity, Efficiency and Scalability. To make it simple to design, upgrade and debug, we leveraged the use of Python and Flask to design a REST API and used SQLite3 to promote rapid development. For the front end, we used jinja2 templates to limit the system overhead needed to run the application otherwise required by more bulky frameworks like React and Angular. The integration also allowed for concurrent development of both the front-end and back-end. Much of these technologies and tools are used by major websites and companies like Netflix, Airbnb, Lyft and many more. So as we expand Demeter, we are confident that our amazing tech stack will grow with us. All these technologies and tools are used by major websites and companies. Netflix, Airbnb, Lyft are all companies using Flask. Netflix also uses vanilla JS for their client-side code and Github also uses vanilla JS. So as we expand Demeter, we are confident that our amazing tech stack will grow with us.</p>
+                </div>
+                <div class="imageContainer">
+                    <div class="image"></div>
+                </div>
+            </div>
+
+        </div>
+
+
+
+
+
+
+
+    </section>
+
+
+
+
+    <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
+    <script>
+        AOS.init();
+    </script>
+
+
+{% endblock %}
+</body>

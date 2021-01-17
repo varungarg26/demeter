@@ -456,6 +456,10 @@ def logout(current_user):
 def homepage():
     return render_template('landing.jinja2')
 
+@app.route('/about')
+def aboutpage():
+    return render_template('about.jinja2')
+
 
 if __name__ == '__main__':
     app.run(debug=True)
