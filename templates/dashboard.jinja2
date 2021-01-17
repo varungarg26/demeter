@@ -68,19 +68,42 @@ body{
 {% block content %}
 
     <p>Invite a friend! Send them this ID: {{ list_data['list_id'] }}</p>
+     <form class="form-email" method="POST">
+            <div class="row4">
+                <input  type="email" id="emailFriend" name="emailFriend" class="emailFriend" placeholder="emailFriend" required autofocus>
+            </div>
+            <div class="row5">
+                <a href="{{ url_for('listCreate') }}"><button class="heroButton signupButton">Invite</button></a>
+            </div>
+        </form>
     <p>Group Name: {{ list_data['GroceryName'] }}</p>
     {% if list_data['picked'] == False %}
         <p>Pickup in Progress: No</p>
         <p>User Picking Up: {{ list_data['pickerUser'] }}</p>
     {% else %}
-        <p>Pickup in Progress: Yes</p>
+        <p>Pickup in Progress: {{ list_data['pickerUser'] }}</p>
 
     {% endif %}
+
+    {% if list_data['picked'] == False %}
+        <a href="{{ url_for('volunteer') }}"><button class="heroButton signupButton">Pickup</button></a>
+    {% endif %}
+     {% if list_data['picked'] == True and  userdata['firstName'] == list_data['pickerUser'] %}
+        <a href="{{ url_for('volunteerUndo') }}"><button class="heroButton signupButton">Cancel Pickup</button></a>
+    {% endif %}
+
+    {% if userdata['firstName'] == list_data['pickerUser'] %}
+        <a href="{{ url_for('gotItems') }}"><button class="heroButton signupButton">All Payments Complete</button></a>
+    {% endif %}
+    {% if userdata['firstName'] != list_data['pickerUser'] and list_data['picked'] == True %}
+        <a href="{{ url_for('gotItems') }}"><button class="heroButton signupButton">Delivery Recieved</button></a>
+    {% endif %}
+
 
     <p>Users in this list: </p>
     <ul>
         {% for x in range(total) %}
-        <li>{{ email_data[x] }}</li>
+        <li>{{ names_data[x] }}</li>
         {% endfor %}
     </ul>
 
@@ -89,16 +112,32 @@ body{
                  <p class="other">Add an item to the list</p>
             </div>
             <div class="row4">
-                <input  type="text" id="groceryList" name="groceryList" class="groceryList" placeholder="Grocery List" required autofocus>
+                <input  type="text" id="ItemName" name="ItemName" class="ItemName" placeholder="Item" required autofocus>
+                <input  type="text" id="Quantity" name="Quantity" class="Quantity" placeholder="Quantity" required autofocus>
+                <input  type="text" id="Comments" name="Comments" class="Comments" placeholder="Comments" required autofocus>
             </div>
             <div class="row5">
-                <a href="{{ url_for('listCreate') }}"><button class="heroButton signupButton">Join</button></a>
+                <a href="{{ url_for('listCreate') }}"><button class="heroButton signupButton">Add Item</button></a>
             </div>
         </form>
 
+ {% if size != 0 %}
+     {% for x in range(total) %}
+        <p>{{ names_data[x] }}</p>
 
-
-
-
+        {% for y in range(size) %}
+            <ul>
+                 {% if allItems[y].userName == names_data[x] %}
+                    <li>{{ allItems[y].itemName }}</li>
+                    <li>{{ allItems[y].quantity }}</li>
+                    <li>{{ allItems[y].comment }}</li>
+                    {% if userdata['firstName'] == allItems[y].userName %}
+                        <a href="{{ url_for('removeFromList', itemid=allItems[y].id) }}"><button class="heroButton signupButton">Delete</button></a>
+                    {% endif %}
+                {% endif %}
+            </ul>
+        {% endfor %}
+     {% endfor %}
+ {% endif %}
 {% endblock %}
 </body>

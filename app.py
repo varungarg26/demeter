@@ -121,7 +121,6 @@ def listCreate(current_user):
 
     if request.form.get('ListName'):
         g = GroceryList.query.filter_by(GroceryName=gList['ListName']).first()
-        print("HIHIHIHIHHIIHIHIHIH")
         if g:
             return jsonify(message="List with the same name exists"),401
         else:
@@ -143,7 +142,6 @@ def listCreate(current_user):
             return redirect(url_for('viewListData'))
 
     elif request.form.get('groceryList'):
-        print("HELLO MY NAME IS RISHI SHAH ")
         return redirect('/api/addUsertoList/' + gList['groceryList'])
 
 @app.route('/api/addUsertoList/<id>')
@@ -202,21 +200,22 @@ def viewList(current_user, grocery_list):
         return jsonify(message="List not found")
 
 
-@app.route('/api/addtoList/<grocery_list>', methods=['POST'])
+@app.route('/api/addtoList/<name>/<quanitity>/<comments>')
 @token_required
-def addtoList(current_user, grocery_list):
+def addtoList(current_user, name, quanitity, comments):
     new = request.form
+    print(current_user.firstName)
     newItem = Item(
         Username=current_user.firstName,
-        list_id=grocery_list,
+        list_id=current_user.groceryList,
         item_id=str(uuid.uuid4()),
-        ItemName=new['ItemName'],
-        Quantity=new['Quantity'],
-        Comments=new['Comments']
+        ItemName=name,
+        Quantity=quanitity,
+        Comments=comments.replace('_', ' ')
     )
     db.session.add(newItem)
     db.session.commit()
-    return jsonify(message="Item Added"), 201
+    return redirect(url_for('viewListData'))
 
 
 
@@ -230,18 +229,29 @@ def volunteer(current_user):
     groupList.picked = True
     groupList.userPickerUp = data['name']
     db.session.commit()
-    return jsonify(message="User has Volunteered")
+    return redirect(url_for('viewListData'))
+
+@app.route('/api/pickedundo', methods=['GET'])
+@token_required
+def volunteerUndo(current_user):
+    data = {}
+    data['name'] = current_user.firstName
+    groupList = GroceryList.query.filter_by(list_id=current_user.groceryList).first()
+    groupList.picked = False
+    groupList.userPickerUp = "none"
+    db.session.commit()
+    return redirect(url_for('viewListData'))
 
 
-@app.route('/api/removeFromList/<itemid>', methods=['DELETE'])
+@app.route('/api/removeFromList/<itemid>')
 @token_required
 def removeFromList(current_user, itemid):
     removeItem = Item.query.filter_by(list_id=current_user.groceryList, item_id=itemid).first()
 
     if removeItem:
         db.session.delete(removeItem)
-        db.sessiom.commit()
-        return jsonify(message="Item has been removed")
+        db.session.commit()
+        return redirect(url_for('viewListData'))
     else:
         return jsonify(message="Item does not exist")
 
@@ -276,16 +286,66 @@ def viewListData(current_user):
 
         users = User.query.filter_by(groceryList=current_user.groceryList).all()
 
-        email_data = []
+        names_data = []
 
         for x in range(len(users)):
-            email_data.append(users[x].email)
+            names_data.append(users[x].firstName)
 
 
-        return render_template('dashboard.jinja2', list_data=list_data, email_data=email_data, total=len(users))
+
+        groupList = GroceryList.query.filter_by(list_id=current_user.groceryList).all()
+        itemListAll = Item.query.filter_by().all()
+        output = []
+        allItems = []
+        if groupList:
+            if itemListAll:
+                for items in itemListAll:
+                    itemss = {}
+                    itemss['itemName'] = items.ItemName
+                    itemss['quantity'] = items.Quantity
+                    itemss['comment'] = items.Comments
+                    itemss['userName'] = items.Username
+                    itemss['id'] = items.item_id
+                    allItems.append(itemss)
+
+                size = len(allItems)
+                print(size)
+                print(allItems)
+                return render_template('dashboard.jinja2', list_data=list_data, names_data=names_data, total=len(users), allItems=allItems, size=size, userdata=session['userData'])
+            else:
+                size = len(allItems)
+                return render_template('dashboard.jinja2', list_data=list_data, names_data=names_data, total=len(users), allItems=allItems, size=size, userdata=session['userData'])
+        else:
+            return jsonify(message="List not found")
+
+
+
+
+
+
+
+
         #return jsonify(list_data=list_data)
     else:
         return redirect(url_for('createList'))
+
+
+@app.route('/api/getGroceryList', methods=['POST'])
+@token_required
+def submitData(current_user):
+    user_data = {}
+    user_data['public_id'] = current_user.public_id
+
+    form = request.form
+
+    if request.form.get('ItemName'):
+        item = form['ItemName']
+        quantity = form['Quantity']
+        comments = form['Comments']
+        commentsSend = comments.replace(' ', '_')
+        return redirect('/api/addtoList/' + item + "/" + quantity + "/" + commentsSend)
+
+
 
 @app.route('/api/getUser', methods=['GET'])
 @token_required
