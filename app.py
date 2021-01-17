@@ -18,10 +18,18 @@ import requests
 from functools import wraps
 from flask import Flask, session
 
+
+
+
+
 app = Flask(__name__)
 basedir = os.path.abspath(os.path.dirname(__file__))
 app.config['SQLALCHEMY_DATABASE_URI']='sqlite:///' + os.path.join(basedir,'users.db')
 app.config['SECRET_KEY']='secret-key'
+SENDGRID_API_KEY = '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'
+
+sg = sendgrid.SendGridAPIClient(api_key=SENDGRID_API_KEY)
+
 
 s = URLSafeTimedSerializer('SECRET_KEY')
 
@@ -205,11 +213,11 @@ def volunteer(current_user):
     db.session.commit()
     return jsonify(message="User has Volunteered")
 
-@app.route('/api/removeFromList/<itemid>', methods=['DELETE'])
+@app.route('/api/removeFromList/<itemid>')
 @token_required
 def removeFromList(current_user, itemid):
 
-    removeItem = Item.query.filter_by(list_id=current_user.groceryList,item_id=itemid).first()
+    removeItem = Item.query.filter_by(item_id=itemid).first()
 
     if removeItem:
         db.session.delete(removeItem)
@@ -252,6 +260,24 @@ def user(current_user):
     user_data['groceryList']=current_user.groceryList
     
     return jsonify(message=user_data)
+
+@app.route('/api/emailInvite/<email>', methods=['GET'])
+@token_required
+def emailInvite(current_user,email):
+   from_email = Email("demetersgrocery@gmail.com")
+   to_email=To(email)
+   subject="Verify your email"
+   token = s.dumps(email, salt='email-confirm')
+   content=Content("text/plain", f"Your friend, {current_user.firstName} is inviting you to join a Demeter's grocery list with the group id of {current_user.groceryList}")
+   mail = Mail(from_email, to_email, subject, content)
+
+   response = sg.client.mail.send.post(request_body=mail.get())
+   print(response.status_code)
+   print(response.body)
+   print(response.headers)
+
+   return jsonify(message="Email invite sent")
+        
 
 @app.route('/api/register', methods=['POST'])
 def register():
