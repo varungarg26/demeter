@@ -281,7 +281,7 @@ def emailInvite(current_user,email):
 def gotItems(current_user):
     current_user.groceryList = None
     db.session.commit()
-    return jsonify(message="You have left the list")
+    return redirect(url_for('viewListData'))
 
 
 @app.route('/api/getGroceryList', methods=['GET'])
@@ -455,6 +455,10 @@ def logout(current_user):
 @app.route('/')
 def homepage():
     return render_template('landing.jinja2')
+
+@app.route('/about')
+def aboutpage():
+    return render_template('about.jinja2')
 
 
 if __name__ == '__main__':
