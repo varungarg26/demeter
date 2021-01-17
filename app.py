@@ -147,7 +147,7 @@ def listCreate(current_user):
 @app.route('/api/addUsertoList/<id>')
 @token_required
 def addUsertoList(current_user, id):
-    groceryGroup = GroceryList.query.filter_by(GroceryName=id).first()
+    groceryGroup = GroceryList.query.filter_by(list_id=id).first()
     current_user.groceryList = groceryGroup.list_id
     db.session.commit()
     return redirect(url_for('viewListData'))
