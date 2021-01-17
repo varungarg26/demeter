@@ -23,7 +23,9 @@ basedir = os.path.abspath(os.path.dirname(__file__))
 app.config['SQLALCHEMY_DATABASE_URI']='sqlite:///' + os.path.join(basedir,'users.db')
 app.config['SECRET_KEY']='secret-key'
 
+SENDGRID_API_KEY = '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'
 
+sg = sendgrid.SendGridAPIClient(api_key=SENDGRID_API_KEY)
 
 
 
@@ -256,6 +258,24 @@ def removeFromList(current_user, itemid):
         return jsonify(message="Item does not exist")
 
 
+@app.route('/api/emailInvite/<email>')
+@token_required
+def emailInvite(current_user,email):
+   from_email = Email("demetersgrocery@gmail.com")
+   to_email=To(email)
+   subject="Verify your email"
+   token = s.dumps(email, salt='email-confirm')
+   content=Content("text/plain", f"Your friend, {current_user.firstName} is inviting you to join a Demeter's grocery list with the link of http://127.0.0.1:5000/api/addUsertoList/{current_user.groceryList}")
+   mail = Mail(from_email, to_email, subject, content)
+
+   response = sg.client.mail.send.post(request_body=mail.get())
+   print(response.status_code)
+   print(response.body)
+   print(response.headers)
+
+   return jsonify(message="Email invite sent")
+
+
 @app.route('/api/gotItems', methods=['GET'])
 @token_required
 def gotItems(current_user):
@@ -344,7 +364,10 @@ def submitData(current_user):
         comments = form['Comments']
         commentsSend = comments.replace(' ', '_')
         return redirect('/api/addtoList/' + item + "/" + quantity + "/" + commentsSend)
+    elif request.form.get('emailFriend'):
+        email = form['emailFriend']
 
+        return redirect('/api/emailInvite/' + email)
 
 
 @app.route('/api/getUser', methods=['GET'])
@@ -407,6 +430,7 @@ def login():
     else:
         return jsonify(message='Your email or password is incorrect'),401
 
+@app.route('/api/register')
 
 @app.route('/api/register')
 def register_page():

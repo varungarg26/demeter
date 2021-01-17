@@ -61,85 +61,420 @@ body{
 .nogroupMain .row1{
     margin-bottom: 50px;
 }
+.main{
+}
+.inviteContainer{
+    padding-top: 30px;
+    padding-bottom: 30px;
+}
+.inviteContainer h5{
+    font-size: 1.5em;
+    font-weight: bold;
+    text-align: center;
+}
+.inviteLinkText{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+}
+.inviteLinkBox{
+    border: 1px solid red;
+    border: 1px solid lightgrey;
+    padding: 4px 8px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    margin-left: 15px;
+}
+.inviteLink {
+    margin-right: 10px;
+    user-select: all;
+    cursor: pointer;
+}
+.copyLinkImage{
+    width: 15px;
+}
+.inviteContainer .row3{
+    display: flex;
+    margin-bottom: 0;
+    padding-bottom: 0;
+    justify-content: center;
+}
+.inviteContainer .row4{
+}
+.inviteContainer .row4 p{
+    font-size: 0.9em;
+}
+.inviteContainer .row5{
+    display: flex;
+    justify-content: center;
+    margin-top: -5px;
+}
+.inviteContainer .email{
+    font-size: 0.9em;
+    outline: none;
+    border: none;
+    border: 1px solid #292929;
+    border-radius: 8px;
+    padding: 3px 6px 3px 6px;
+    margin-right: 20px;
+}
+.inviteContainer .heroButton{
+    background-color: #D2EA9B;
+}
+.inviteContainer .heroButton:hover{
+    /*background-color: #18455A;
+    color: white;*/
+}
+.listHead{
+    padding-top: 20px;
+    display: flex;
+    justify-content: space-between;
+    padding-left: 20px;
+    padding-right: 20px;
+}
+.headLeft{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+.groceryListName{
+    font-size: 2em;
+    font-weight: bold;
+    margin-right: 20px;
+    margin-bottom: 0;
+}
+.listStatus {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+.pickupUser, .pickupProgress{
+    padding: 2px 8px;
+    text-transform: lowercase;
+    margin-bottom: 0;
+}
+.pickupUser{
+    margin-right: 15px;
+    border-radius: 10px;
+    border: 1px solid #DEDEDE;
+    background-color: #DEDEDE;
+}
+.pickupProgress.noProgress{
+    border-radius: 10px;
+    border: 1px solid #FFD3D3;
+    background-color: #FFD3D3;
+}
+.pickupProgress.inProgress{
+    border-radius: 10px;
+    border: 1px solid #D8FFD3;
+    background-color: #D8FFD3;
+}
+.headButtons{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+.headButtons a{
+}
+.pickupButton{
+    padding: 2px 8px;
+    text-transform: lowercase;
+    margin-bottom: 0;
+    background: none;
+    border-radius: 10px;
+    border: 1px solid #C4D9FF;
+    background-color: #C4D9FF;
+}
+.pickupButton.cancelPickup{
+    border: 1px solid #FFD3D3;
+    background-color: #FFD3D3;
+    margin-right: 15px;
+}
+.paymentButton, .deliveryButton{
+    padding: 2px 8px;
+    text-transform: lowercase;
+    margin-bottom: 0;
+    background: none;
+    border-radius: 10px;
+    border: 1px solid #C4D9FF;
+    background-color: #C4D9FF;
+}
+.listBody{
+    display: flex;
+    padding-left: 20px;
+    padding-right: 20px;
+    padding-top: 20px;
+}
+.listTabs{
+    width: 80%;
+}
+.addList{
+    width: 20%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+.itemName, .itemQuantity, .itemComments{
+    font-size: 1em;
+    outline: none;
+    border: none;
+    border: 1px solid #292929;
+    border-radius: 8px;
+    padding: 4px 8px 4px 8px;
+    width: 100%;
+}
+.addList .row1 p{
+    text-align: center;
+    font-size: 1.2em;
+    font-weight: 500;
+}
+.addList .row2, .row3, .row4{
+    margin-bottom: 10px;
+}
+.addList .row5{
+    display: flex;
+    justify-content: center;
+}
+.itemAddButton{
+    margin-top: 10px;
+    border: 1px solid black;
+    padding: 4px 8px;
+    border-radius: 5px;
+    background: none;
+    background-color: #D2EA9B;
+}
+.accordianSection{
+}
+.accordianSection p{
+    margin-bottom: 0;
+}
+.accordianHead{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 50px;
+    border-radius: 10px;
+    padding-left: 10px;
+    padding-right: 10px;
+    background-color: #F8F8F8;
+}
+.accordianName{
+    font-size: 1.2em;
+    margin-bottom: 0;
+    font-weight: 500;
+}
+.accordianArrow{
+    padding: 0 10px;
+    width: 40px;
+}
+.accordianContents{
+    padding: 0 10px;
+    max-height: auto;
+    opacity: 1;
+}
+.hiddenContent{
+    border: 1px solid red;
+    max-height: 1px;
+    opacity: 0;
+    overflow: hidden;
+}
+.accordianContents ul{
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+}
+.groceryItem{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+.itemLeft{
+    display: flex;
+    flex-direction: column;
+}
+.itemRow1{
+    display: flex;
+}
+.groceryName{
+    font-size: 1.1em;
+    margin-right: 10px;
+}
+.groceryQuantity{
+    font-size: 1.1em;
+}
+.groceryComment{
+    color: #777777;
+    font-style: italic;
+    font-size: 0.9em;
+}
+.itemRight{
+}
+.itemLeft{
+}
+.deleteButton{
+    border-radius: 10px;
+    background: none;
+    border: none;
+    text-transform: lowercase;
+    background-color: #FFD3D3;
+    padding: 4px 8px;
+}
 </style>
 {% endblock %}
 
 <body>
 {% block content %}
 
-    <p>Invite a friend! Send them this ID: {{ list_data['list_id'] }}</p>
-     <form class="form-email" method="POST">
-            <div class="row4">
-                <input  type="email" id="emailFriend" name="emailFriend" class="emailFriend" placeholder="emailFriend" required autofocus>
+    <section class="main">
+
+        <div class="inviteContainer">
+
+            <div class="row1">
+                <h5>Invite a friend!</h5>
             </div>
-            <div class="row5">
-                <a href="{{ url_for('listCreate') }}"><button class="heroButton signupButton">Invite</button></a>
+            <div class="row2">
+                <p class="inviteLinkText">Send them this ID: <span class=" inviteLinkBox"><span class="inviteLink">{{ list_data['list_id'] }}</span> <img src="../static/copy-icon.svg" class="copyLinkImage"/></span></p>
             </div>
-        </form>
-    <p>Group Name: {{ list_data['GroceryName'] }}</p>
-    {% if list_data['picked'] == False %}
-        <p>Pickup in Progress: No</p>
-        <p>User Picking Up: {{ list_data['pickerUser'] }}</p>
-    {% else %}
-        <p>Pickup in Progress: {{ list_data['pickerUser'] }}</p>
-
-    {% endif %}
-
-    {% if list_data['picked'] == False %}
-        <a href="{{ url_for('volunteer') }}"><button class="heroButton signupButton">Pickup</button></a>
-    {% endif %}
-     {% if list_data['picked'] == True and  userdata['firstName'] == list_data['pickerUser'] %}
-        <a href="{{ url_for('volunteerUndo') }}"><button class="heroButton signupButton">Cancel Pickup</button></a>
-    {% endif %}
-
-    {% if userdata['firstName'] == list_data['pickerUser'] %}
-        <a href="{{ url_for('gotItems') }}"><button class="heroButton signupButton">All Payments Complete</button></a>
-    {% endif %}
-    {% if userdata['firstName'] != list_data['pickerUser'] and list_data['picked'] == True %}
-        <a href="{{ url_for('gotItems') }}"><button class="heroButton signupButton">Delivery Recieved</button></a>
-    {% endif %}
-
-
-    <p>Users in this list: </p>
-    <ul>
-        {% for x in range(total) %}
-        <li>{{ names_data[x] }}</li>
-        {% endfor %}
-    </ul>
-
-    <form class="form-item" method="POST">
             <div class="row3">
-                 <p class="other">Add an item to the list</p>
+                <form method="POST">
+                    <div class="row4">
+                        <p>Want to send them an invitation email instead? Enter their email here: </p>
+                    </div>
+                    <div class="row5">
+                        <input  type="email" id="emailFriend" name="emailFriend" class="emailFriend email" placeholder="Email Friend" required autofocus>
+                        <a href="{{ url_for('listCreate') }}"><button class="heroButton signupButton">Invite</button></a>
+                    </div>
+                </form>
             </div>
-            <div class="row4">
-                <input  type="text" id="ItemName" name="ItemName" class="ItemName" placeholder="Item" required autofocus>
-                <input  type="text" id="Quantity" name="Quantity" class="Quantity" placeholder="Quantity" required autofocus>
-                <input  type="text" id="Comments" name="Comments" class="Comments" placeholder="Comments" required autofocus>
-            </div>
-            <div class="row5">
-                <a href="{{ url_for('listCreate') }}"><button class="heroButton signupButton">Add Item</button></a>
-            </div>
-        </form>
+        </div>
 
- {% if size != 0 %}
-     {% for x in range(total) %}
-        <p>{{ names_data[x] }}</p>
+        <section class="groceryList">
 
-        {% for y in range(size) %}
-            <ul>
-                 {% if allItems[y].userName == names_data[x] %}
-                    <li>{{ allItems[y].itemName }}</li>
-                    <li>{{ allItems[y].quantity }}</li>
-                    <li>{{ allItems[y].comment }}</li>
-                    {% if userdata['firstName'] == allItems[y].userName %}
-                        <a href="{{ url_for('removeFromList', itemid=allItems[y].id) }}"><button class="heroButton signupButton">Delete</button></a>
+            <div class="listHead">
+                <div class="headLeft">
+                    <h3 class="groceryListName">{{ list_data['GroceryName'] }}</h3>
+                    {% if list_data['picked'] == False %}
+                        <div class="listStatus">
+                            <p class="pickupUser" >Pickup User: {{ list_data['pickerUser'] }}</p>
+                            <p class="pickupProgress noProgress">Pickup not in progress.</p>
+                        </div>
+                    {% else %}
+                        <div class="listStatus">
+                            <p class="pickupUser" >Pickup User: {{ list_data['pickerUser'] }}</p>
+                            <p class="pickupProgress inProgress">Pickup in Progress.</p>
+                       </div>
                     {% endif %}
-                {% endif %}
-            </ul>
-        {% endfor %}
-     {% endfor %}
- {% endif %}
+                </div>
+                <div class="headButtons">
+                    {% if list_data['picked'] == False %}
+                        <a href="{{ url_for('volunteer') }}"><button class="pickupButton">Volunteer for Pickup</button></a>
+                    {% endif %}
 
-    <iframe src="https://www.google.com/maps/embed?pb=!1m28!1m12!1m3!1d23008.90194686591!2d-79.04108386299932!3d43.874215613304216!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!4m13!3e0!4m5!1s0x89d51ff544c0da6f%3A0x2717962e9f2e2adf!2s52%20Bignell%20Crescent%2C%20Ajax%2C%20ON!3m2!1d43.8881965!2d-79.0184929!4m5!1s0x89d4dfe53dd364a1%3A0x5278fb93f46d74a1!2sReal%20Canadian%20Superstore%2C%20Kingston%20Road%20West%2C%20Ajax%2C%20ON!3m2!1d43.8607916!2d-79.0313393!5e0!3m2!1sen!2sca!4v1610845434690!5m2!1sen!2sca" width="600" height="450" frameborder="0" style="border:0;" allowfullscreen="" aria-hidden="false" tabindex="0"></iframe>
+                    {% if list_data['picked'] == True and  userdata['firstName'] == list_data['pickerUser'] %}
+                        <a href="{{ url_for('volunteerUndo') }}"><button class="pickupButton cancelPickup">Cancel Pickup</button></a>
+                    {% endif %}
+
+                    {% if userdata['firstName'] == list_data['pickerUser'] %}
+                        <a href="{{ url_for('gotItems') }}"><button class="paymentButton">All Payments Complete</button></a>
+                    {% endif %}
+
+                    {% if userdata['firstName'] != list_data['pickerUser'] and list_data['picked'] == True %}
+                        <a href="{{ url_for('gotItems') }}"><button class="deliveryButton">Delivery Recieved</button></a>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="listBody">
+
+                <div class="listTabs">
+
+                    {% if size != 0 %}
+                        {% for x in range(total) %}
+                            <div class="accordianSection">
+                                <div class="accordianHead">
+                                    <p class="accordianName">{{ names_data[x] }}</p>
+                                    <img class="accordianArrow" src="../static/arrow.svg"/>
+                                </div>
+
+                                <div class="accordianContents hiddenContent">
+                                    <ul>
+                                        {% for y in range(size) %}
+                                            {% if allItems[y].userName == names_data[x] %}
+
+                                                <li class="groceryItem">
+                                                    <div class="itemLeft">
+                                                        <div class="itemRow1">
+                                                            <p class="groceryName">{{ allItems[y].itemName }},</p>
+                                                            <p class="groceryQuantity">quantity: {{ allItems[y].quantity }}</p>
+                                                        </div>
+                                                        <div class="itemRow2">
+                                                            <p class="groceryComment">{{ allItems[y].comment }}</p>
+                                                        </div>
+                                                    </div>
+                                                    {% if userdata['firstName'] == allItems[y].userName %}
+                                                        <a href="{{ url_for('removeFromList', itemid=allItems[y].id) }}"><button class="deleteButton">Delete Item</button></a>
+                                                    {% endif %}
+                                                </li>
+                                            {% endif %}
+                                        {% endfor %}
+                                    </ul>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+                </div>
+
+
+                <div class="addList">
+                    <form class="" method="POST">
+                        <div class="row1">
+                            <p>Add an item to the list</p>
+                        </div>
+                        <div class="row2">
+                           <input  type="text" id="ItemName" name="ItemName" class="ItemName itemName" placeholder="Item" required autofocus>
+                        </div>
+                        <div class="row3">
+                            <input  type="text" id="Quantity" name="Quantity" class="Quantity itemQuantity" placeholder="Quantity" required autofocus>
+                        </div>
+                        <div class="row4">
+                            <input  type="text" id="Comments" name="Comments" class="Comments itemComments" placeholder="Comments" required autofocus>
+                        </div>
+                        <div class="row5">
+                            <a href="{{ url_for('listCreate') }}"><button class="itemAddButton">Add Item</button></a>
+                        </div>
+                    </form>
+                </div>
+
+
+            </div>
+
+
+        </section>
+
+    </section>
+
+
+   <script>
+        var accordianHeads = document.querySelectorAll(".accordianHead");
+        accordianHeads.forEach(item => {
+            item.addEventListener('click', function(event) {
+                var targetElement = event.target;
+                console.log(targetElement);
+                if (targetElement.classList.contains("accordianHead")){
+                    targetElement.nextElementSibling.classList.toggle("hiddenContent");
+                }
+                else if (targetElement.classList.contains("accordianName")){
+                    targetElement.parentElement.nextElementSibling.classList.toggle("hiddenContent");
+                }
+                else if (targetElement.classList.contains("accordianArrow")){
+                    targetElement.parentElement.nextElementSibling.classList.toggle("hiddenContent");
+                }
+            });
+        })
+   </script>
+
 {% endblock %}
 </body>
